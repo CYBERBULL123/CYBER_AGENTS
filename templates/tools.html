@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto text-center">
+    <h1 class="text-3xl font-bold text-blue-400">AI Security Tools</h1>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
+        <!-- Cybersecurity Assistant -->
+        <a href="cybersecurity-assistant" class="bg-gray-800 p-6 rounded-lg shadow-md text-center hover:bg-gray-700 transition">
+            <span class="material-icons text-red-400 text-4xl">psychology</span>
+            <h2 class="text-lg font-bold mt-2">Cybersecurity Assistant</h2>
+            <p class="text-gray-300">Get real-time AI insights on security threats, incidents, and best practices.</p>
+        </a>
+
+        <!-- Threat Detection -->
+        <a href="threat-detection" class="bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition">
+            <span class="material-icons text-blue-400 text-4xl">network_check</span>
+            <h2 class="text-lg font-bold mt-2">Threat Detection</h2>
+            <p class="text-gray-300">Identify and analyze potential threats in your network with AI-powered monitoring.</p>
+        </a>
+
+        <!-- Vulnerability Scanner -->
+        <a href="vulnerability-scanner" class="bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition">
+            <span class="material-icons text-green-400 text-4xl">shield</span>
+            <h2 class="text-lg font-bold mt-2">Vulnerability Scanner</h2>
+            <p class="text-gray-300">Scan and detect vulnerabilities in your systems to strengthen your defenses.</p>
+        </a>
+
+        <!-- Incident Response -->
+        <a href="incident-response" class="bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition">
+            <span class="material-icons text-red-400 text-4xl">warning</span>
+            <h2 class="text-lg font-bold mt-2">Incident Response</h2>
+            <p class="text-gray-300">Quickly respond to and mitigate security incidents with AI-guided solutions.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

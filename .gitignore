@@ -1,0 +1,56 @@
+# Ignore sensitive data
+.env
+.env.local
+.env.*.local
+secrets/
+keys/
+credentials.json
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environments
+myenv/
+venv/
+env/
+ENV/
+.env/
+.venv/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Ignore build and distribution files
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Ignore logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore coverage reports
+.coverage
+htmlcov/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db

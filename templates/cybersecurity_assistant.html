@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-blue-400 text-center">Cybersecurity AI Assistant</h1>
+
+<!-- Chat Input -->
+<form 
+    hx-post="/ask" 
+    hx-target="#response-container" 
+    hx-swap="beforeend"
+    hx-indicator="#loading-spinner"
+    class="flex gap-2 mt-4"
+>
+    <input 
+        type="text" name="question" 
+        placeholder="Ask a security question..." 
+        class="flex-1 p-3 rounded bg-gray-800 text-white focus:ring focus:ring-blue-400"
+        required
+    >
+    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+        <span class="material-icons">send</span>
+    </button>
+</form>
+
+<!-- Loading Indicator -->
+<div id="loading-spinner" class="htmx-indicator text-center mt-2 hidden">
+    <span class="text-blue-400 animate-spin material-icons">sync</span>
+</div>
+
+<!-- Response Container -->
+<div id="response-container" class="mt-4 space-y-4">
+    {% for chat in session.get('chat_history', []) %}
+        <div class="bg-gray-800 p-4 rounded-lg">
+            <p><strong>Q:</strong> {{ chat.question }}</p>
+            <p><strong>A:</strong> {{ chat.response|safe }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- HTMX JSON Handling -->
+<script>
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        if (event.detail.xhr.responseText) {
+            try {
+                let response = JSON.parse(event.detail.xhr.responseText);
+                if (response.html) {
+                    let container = document.querySelector("#response-container");
+                    container.insertAdjacentHTML("beforeend", response.html);
+                }
+            } catch (e) {
+                console.error("Error parsing JSON:", e);
+            }
+        }
+    });
+</script>
+{% endblock %}
