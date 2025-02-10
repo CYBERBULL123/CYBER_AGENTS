@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center py-12">
+    <h1 class="text-4xl font-bold text-blue-400 mb-4">Welcome to CyberAgent AI</h1>
+    <p class="text-xl text-gray-300">AI-powered cybersecurity solutions for modern threats.</p>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <a href="/threat-detection" class="bg-gray-800 p-6 rounded-lg hover:bg-gray-700 transition flex flex-col items-center">
+            <span class="material-icons text-blue-400 text-5xl">security</span>
+            <h2 class="text-lg font-bold mt-2">Threat Detection</h2>
+            <p class="text-gray-300 text-sm">Monitor and detect threats in real-time.</p>
+        </a>
+
+        <a href="/vulnerability-scanner" class="bg-gray-800 p-6 rounded-lg hover:bg-gray-700 transition flex flex-col items-center">
+            <span class="material-icons text-green-400 text-5xl">shield</span>
+            <h2 class="text-lg font-bold mt-2">Vulnerability Scanner</h2>
+            <p class="text-gray-300 text-sm">Identify and patch system vulnerabilities.</p>
+        </a>
+
+        <a href="/incident-response" class="bg-gray-800 p-6 rounded-lg hover:bg-gray-700 transition flex flex-col items-center">
+            <span class="material-icons text-red-400 text-5xl">warning</span>
+            <h2 class="text-lg font-bold mt-2">Incident Response</h2>
+            <p class="text-gray-300 text-sm">Automate and manage security incidents.</p>
+        </a>
+    </div>
+
+    <!-- Cybersecurity Assistant Form -->
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold text-blue-400 mb-4">Cybersecurity Assistant</h2>
+        <form hx-post="/ask" hx-target="#agent-response" hx-swap="innerHTML"
+            class="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
+            <input type="text" name="question" placeholder="Ask a cybersecurity question..."
+                class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-400">
+            <button type="submit" class="mt-4 w-full bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600">
+                Ask CyberAgent
+            </button>
+        </form>
+        <div id="agent-response" class="mt-4 p-4 bg-gray-800 rounded-lg text-gray-300">
+            <!-- AI Response will appear here -->
+        </div>
+    </div>
+
+    <!-- HTMX Script for Handling Responses -->
+    <script>
+        document.addEventListener('htmx:afterRequest', function(evt) {
+            const responseDiv = document.getElementById('agent-response');
+            
+            if (evt.detail.successful) {
+                try {
+                    const responseData = JSON.parse(evt.detail.xhr.responseText);
+                    responseDiv.innerHTML = `<p class="text-green-400">${responseData.response || "No valid response received."}</p>`;
+                } catch (error) {
+                    responseDiv.innerHTML = `<p class="text-red-400">Error: Invalid server response.</p>`;
+                }
+            } else {
+                responseDiv.innerHTML = `<p class="text-red-400">Error: Failed to get a response from the AI.</p>`;
+            }
+        });
+    </script>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="py-12">
+    <h1 class="text-3xl font-bold text-blue-400 mb-6">Threat Detection Dashboard</h1>
+
+    <!-- Real-time Threat Monitoring -->
+    <div class="bg-gray-800 p-6 rounded-lg">
+        <h2 class="text-2xl font-bold text-blue-400 mb-4">Real-time Network Monitoring</h2>
+        <div id="threat-data" hx-get="/threat-detection/data" hx-trigger="every 5s" hx-swap="innerHTML">
+            Loading threat data...
+        </div>
+    </div>
+</div>
+{% endblock %}

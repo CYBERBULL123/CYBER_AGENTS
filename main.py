@@ -1,5 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 # Import agent routes
@@ -11,48 +13,63 @@ from agents.incident_response.response_automator import router as incident_respo
 from ai_system.langchain_config.gemini_agent import agent_executor, tool_names, tools_str
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(title="CyberAgent AI", description="AI-powered cybersecurity platform.")
 
-# CORS Middleware - adjust as needed for production
+# Configure static files and templates
+app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+templates = Jinja2Templates(directory="frontend/templates")
+
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace "*" with specific origins for production
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Root endpoint
-@app.get("/")
-def read_root():
-    return {"message": "Cybersecurity AI Agents System"}
-
-# Pydantic model to validate the input
 class QuestionRequest(BaseModel):
     question: str
 
-# Gemini-powered agent endpoint
+# Route handlers for pages
+@app.get("/")
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/vulnerability-scanner")
+async def vulnerability_page(request: Request):
+    return templates.TemplateResponse("vulnerability.html", {"request": request})
+
+@app.get("/incident-response")
+async def incident_page(request: Request):
+    return templates.TemplateResponse("incident_response.html", {"request": request})
+
+@app.get("/threat-detection")
+async def threat_page(request: Request):
+    return templates.TemplateResponse("threat_detection.html", {"request": request})
+
+# Cybersecurity Assistant endpoint
 @app.post("/ask")
-async def ask_agent(request: QuestionRequest):
-    """Endpoint to ask the agent a question."""
+async def ask_agent(question: str = Form(...)):
     try:
-        # Build the input dictionary with all required variables
         input_vars = {
-            "input": request.question,
+            "input": question,
             "agent_scratchpad": "",
             "tool_names": tool_names,
             "tools": tools_str,
         }
         response = agent_executor.invoke(input_vars)
-        return {"response": response}
+        
+        # Extract the final answer from the response
+        final_answer = response.get("response", "No response generated.")
+        return {"response": final_answer}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process request: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-# Include agent routes for specific cybersecurity tasks
-app.include_router(threat_detection_router, prefix="/threat-detection")
-app.include_router(vulnerability_scanner_router, prefix="/vulnerability-scanner")
-app.include_router(incident_response_router, prefix="/incident-response")
+# Include agent API routes
+app.include_router(threat_detection_router, prefix="/api/threat-detection")
+app.include_router(vulnerability_scanner_router, prefix="/api/vulnerability-scanner")
+app.include_router(incident_response_router, prefix="/api/incident-response")
 
-# Run the app with Uvicorn if executed directly
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
