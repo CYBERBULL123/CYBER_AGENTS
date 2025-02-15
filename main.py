@@ -59,8 +59,15 @@ async def ask_agent(question: str = Form(...)):
         }
         response = agent_executor.invoke(input_vars)
         
-        # Extract the final answer from the response
-        final_answer = response.get("response", "No response generated.")
+        # Extract the response from the agent's output
+        agent_response = response.get("response", "No response generated.")
+        
+        # Extract the final answer from the agent's response
+        if "Final Answer" in agent_response:
+            final_answer = agent_response.split("Final Answer:")[-1].strip()
+        else:
+            final_answer = agent_response  # Fallback to the full response if no "Final Answer" is found
+        
         return {"response": final_answer}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")

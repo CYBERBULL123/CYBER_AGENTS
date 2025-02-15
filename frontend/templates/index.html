@@ -46,15 +46,48 @@
     <script>
         document.addEventListener('htmx:afterRequest', function(evt) {
             const responseDiv = document.getElementById('agent-response');
+            responseDiv.innerHTML = ''; // Clear previous content
+
             if (evt.detail.successful) {
                 try {
                     const responseData = JSON.parse(evt.detail.xhr.responseText);
-                    responseDiv.innerHTML = `<p class="text-green-400">${responseData.response || "No valid response received."}</p>`;
+                    if (responseData.response && responseData.response.trim().length > 0) {
+                        // Preserve line breaks and format response
+                        const formattedResponse = responseData.response
+                            .replace(/\n/g, '<br>')
+                            .replace(/  /g, '&nbsp;&nbsp;');
+                        
+                        responseDiv.innerHTML = `
+                            <div class="space-y-2">
+                                <div class="flex items-start">
+                                    <span class="material-icons text-green-400 mr-2">check_circle</span>
+                                    <div class="prose prose-invert">${formattedResponse}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        responseDiv.innerHTML = `
+                            <div class="text-yellow-400">
+                                <span class="material-icons">info</span>
+                                Received empty response from the AI
+                            </div>
+                        `;
+                    }
                 } catch (error) {
-                    responseDiv.innerHTML = `<p class="text-red-400">Error: Invalid server response.</p>`;
+                    responseDiv.innerHTML = `
+                        <div class="text-red-400">
+                            <span class="material-icons">error</span>
+                            Error parsing response: ${error.message}
+                        </div>
+                    `;
                 }
             } else {
-                responseDiv.innerHTML = `<p class="text-red-400">Error: Failed to get a response from the AI.</p>`;
+                responseDiv.innerHTML = `
+                    <div class="text-red-400">
+                        <span class="material-icons">error</span>
+                        Server error: ${evt.detail.xhr.statusText || "Unknown error"}
+                    </div>
+                `;
             }
         });
     </script>
